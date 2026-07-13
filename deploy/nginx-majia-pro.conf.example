@@ -1,0 +1,38 @@
+server {
+    listen 80;
+    listen [::]:80;
+    server_name www.majia.pro;
+    return 301 https://$host$request_uri;
+}
+
+server {
+    listen 443 ssl;
+    listen [::]:443 ssl;
+    http2 on;
+    server_name www.majia.pro;
+
+    root /var/www/personal-site;
+    index index.html;
+
+    ssl_certificate /etc/nginx/certs/majia.pro/fullchain.cer;
+    ssl_certificate_key /etc/nginx/certs/majia.pro/privkey.key;
+    ssl_protocols TLSv1.2 TLSv1.3;
+
+    add_header X-Content-Type-Options nosniff always;
+    add_header Referrer-Policy strict-origin-when-cross-origin always;
+
+    location = / {
+        try_files /index.html =404;
+    }
+
+    location / {
+        try_files $uri/index.html $uri =404;
+    }
+
+    location ~* \.(?:css|js|webp|png|jpg|jpeg|gif|svg|ico|txt|xml|json|zip)$ {
+        try_files $uri =404;
+        expires 7d;
+        add_header Cache-Control "public, max-age=604800";
+        add_header X-Content-Type-Options nosniff always;
+    }
+}

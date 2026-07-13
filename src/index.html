@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="导入录屏和主讲人两路素材，在横版 16:9 与竖版 9:16 中选择口播构图、预览效果，并导出 ChatCut JSX、JSON 与剪辑交接文档。" />
+    <meta name="theme-color" content="#181816" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="口播画布｜录屏 + 主讲人双画面构图工具" />
+    <meta property="og:description" content="导入录屏和主讲人两路素材，在横版 16:9 与竖版 9:16 中选择口播构图、预览效果，并导出 ChatCut JSX、JSON 与剪辑交接文档。" />
+    <meta property="og:url" content="https://www.majia.pro/koubo" />
+    <link rel="canonical" href="https://www.majia.pro/koubo" />
+    <link rel="icon" href="/favicon.svg" />
+    <link rel="stylesheet" href="/koubo/dual-studio.css?v=20260713-dual1" />
+    <title>口播画布｜录屏 + 主讲人双画面构图工具</title>
+  </head>
+  <body>
+    <a class="skip-link" href="#studio">跳到双画面配置区</a>
+
+    <header class="site-header">
+      <a class="brand" href="/koubo" aria-label="口播画布首页">
+        <span class="brand-mark" aria-hidden="true">口</span>
+        <span class="brand-copy">
+          <strong>口播画布</strong>
+          <small>双画面口播工作台</small>
+        </span>
+      </a>
+      <nav class="header-nav" aria-label="页内导航">
+        <a href="#studio">开始配置</a>
+        <a href="#handoff">AI 剪辑交接</a>
+        <a class="header-download" href="/koubo/portrait-talk-theme-kit.zip" download>原始配色包</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero" aria-labelledby="page-heading">
+        <div class="hero-copy">
+          <p class="eyebrow">口播视频的第一性原理</p>
+          <h1 id="page-heading">录屏负责证明，<br /><em>主讲人负责讲清。</em></h1>
+          <p>它不是海报生成器。每一版都围绕两路真实素材构图：【录屏画面 1】+ 【主讲人画面 2】，再加字幕和一层克制包装。</p>
+        </div>
+        <div class="hero-model" aria-label="双画面口播结构">
+          <div><b>01</b><span>录屏画面</span><small>操作、数据、结果</small></div>
+          <i aria-hidden="true">+</i>
+          <div><b>02</b><span>主讲人画面</span><small>表达、信任、节奏</small></div>
+          <i aria-hidden="true">=</i>
+          <div class="model-result"><b>03</b><span>可编辑成片</span><small>横版 / 竖版原生构图</small></div>
+        </div>
+      </section>
+
+      <section class="studio" id="studio" aria-label="双画面口播配置器">
+        <div class="controls">
+          <section class="panel" aria-labelledby="media-heading">
+            <div class="panel-heading">
+              <div><span class="step">01</span><h2 id="media-heading">放入两路素材</h2></div>
+              <span class="panel-note">仅在本机预览</span>
+            </div>
+            <div class="source-grid">
+              <article class="source-card source-screen">
+                <div class="source-number">1</div>
+                <div class="source-copy">
+                  <strong>录屏画面</strong>
+                  <p>软件操作、数据、文档或结果证据</p>
+                  <small id="screenFileName">尚未选择素材</small>
+                </div>
+                <label class="upload-button" for="screenUpload">选择图片 / 视频</label>
+                <input id="screenUpload" class="visually-hidden" type="file" accept="image/*,video/*" />
+                <button id="removeScreen" class="remove-button" type="button" hidden>移除</button>
+              </article>
+              <article class="source-card source-speaker">
+                <div class="source-number">2</div>
+                <div class="source-copy">
+                  <strong>主讲人画面</strong>
+                  <p>人像视频、绿幕 / 透明抠像或头像图</p>
+                  <small id="speakerFileName">尚未选择素材</small>
+                </div>
+                <label class="upload-button" for="speakerUpload">选择图片 / 视频</label>
+                <input id="speakerUpload" class="visually-hidden" type="file" accept="image/*,video/*" />
+                <button id="removeSpeaker" class="remove-button" type="button" hidden>移除</button>
+              </article>
+            </div>
+          </section>
+
+          <section class="panel" aria-labelledby="format-heading">
+            <div class="panel-heading">
+              <div><span class="step">02</span><h2 id="format-heading">选择发布画幅</h2></div>
+              <span class="panel-note">两套原生坐标</span>
+            </div>
+            <div id="formatGrid" class="format-grid" role="radiogroup" aria-label="发布画幅"></div>
+          </section>
+
+          <section class="panel" aria-labelledby="composition-heading">
+            <div class="panel-heading">
+              <div><span class="step">03</span><h2 id="composition-heading">选择双画面构图</h2></div>
+              <span id="layoutCount" class="panel-note">4 种当前画幅版式</span>
+            </div>
+            <div id="compositionGrid" class="composition-grid" role="radiogroup" aria-label="双画面构图"></div>
+          </section>
+
+          <section class="panel" aria-labelledby="packaging-heading">
+            <div class="panel-heading">
+              <div><span class="step">04</span><h2 id="packaging-heading">包装与字幕</h2></div>
+              <span class="panel-note">延用原始 8 套配色</span>
+            </div>
+            <div id="themeGrid" class="theme-grid" role="radiogroup" aria-label="8 套包装配色"></div>
+            <div class="form-grid">
+              <label class="field field-wide">
+                <span>顶栏主题</span>
+                <input id="topicInput" type="text" maxlength="18" value="连锁餐饮 AI 实战" />
+              </label>
+              <label class="field field-wide">
+                <span>当前观点</span>
+                <input id="pointInput" type="text" maxlength="22" value="真实录屏是信任的证据" />
+              </label>
+              <label class="field field-wide">
+                <span>字幕样例</span>
+                <input id="subtitleInput" type="text" maxlength="13" value="先看操作，再讲方法" />
+              </label>
+              <label class="field">
+                <span>录屏适配</span>
+                <select id="screenFitSelect">
+                  <option value="auto">跟随版式建议</option>
+                  <option value="contain">完整显示（contain）</option>
+                  <option value="cover">聚焦裁切（cover）</option>
+                </select>
+              </label>
+              <label class="field">
+                <span>人物形态</span>
+                <select id="speakerShapeSelect">
+                  <option value="auto">跟随版式建议</option>
+                  <option value="circle">正圆画中画</option>
+                  <option value="rounded">圆角矩形</option>
+                  <option value="cutout">透明抠像</option>
+                </select>
+              </label>
+            </div>
+            <div class="toggle-list">
+              <label class="toggle-row">
+                <span><strong>显示单行字幕</strong><small>字幕永远避让人像与关键 UI</small></span>
+                <input id="subtitleToggle" type="checkbox" checked /><i aria-hidden="true"></i>
+              </label>
+              <label class="toggle-row">
+                <span><strong>显示安全区与素材标记</strong><small>仅预览，不会输出到成品 PNG</small></span>
+                <input id="guideToggle" type="checkbox" checked /><i aria-hidden="true"></i>
+              </label>
+            </div>
+          </section>
+        </div>
+
+        <aside class="preview-column" aria-labelledby="preview-heading">
+          <div class="preview-toolbar">
+            <div><span>LIVE COMPOSITION</span><h2 id="preview-heading">双画面成片预览</h2></div>
+            <div class="preview-spec"><b id="previewRatio">16:9</b><span id="previewDimensions">1920 × 1080</span></div>
+          </div>
+          <div id="previewStage" class="preview-stage">
+            <div id="previewViewport" class="preview-viewport" aria-label="双画面口播效果预览">
+              <div id="videoCanvas" class="video-canvas">
+                <div class="canvas-grid" aria-hidden="true"></div>
+                <div id="canvasTitle" class="canvas-title"></div>
+                <div id="screenShell" class="media-shell screen-shell">
+                  <div class="browser-bar" aria-hidden="true"><i></i><i></i><i></i><span></span></div>
+                  <div id="screenMedia" class="media-body screen-media">
+                    <div class="screen-placeholder" aria-hidden="true">
+                      <div class="screen-sidebar"></div>
+                      <div class="screen-content"><b></b><i></i><i></i><div><span></span><span></span><span></span></div></div>
+                    </div>
+                  </div>
+                  <span class="slot-label"><b>1</b>录屏画面</span>
+                </div>
+                <div id="speakerShell" class="media-shell speaker-shell">
+                  <div id="speakerMedia" class="media-body speaker-media">
+                    <div class="speaker-placeholder" aria-hidden="true"><i></i><span></span></div>
+                  </div>
+                  <span class="slot-label"><b>2</b>主讲人</span>
+                </div>
+                <div id="canvasPoint" class="canvas-point"></div>
+                <div id="canvasSubtitle" class="canvas-subtitle"></div>
+                <div id="safeOverlay" class="safe-overlay" aria-hidden="true"><span>平台安全区</span></div>
+              </div>
+            </div>
+          </div>
+          <div class="preview-notes">
+            <span><i></i>素材不会上传服务器</span>
+            <span id="layoutAdvice">录屏为主画面，人像不压字幕。</span>
+          </div>
+        </aside>
+      </section>
+
+      <section class="handoff" id="handoff" aria-labelledby="handoff-heading">
+        <div class="handoff-copy">
+          <p class="eyebrow">不只是一张预览图</p>
+          <h2 id="handoff-heading">把构图决策交给 ChatCut，<br />而不是让 AI 重新猜一遍。</h2>
+          <p>每次配置都会生成固定画布、两个素材槽位、裁切策略、字幕安全区和图层顺序。</p>
+          <ul>
+            <li>录屏是主证据，优先保护字段、数值、按钮和光标操作。</li>
+            <li>主讲人等比例裁切，正圆画中画不会把脸挤成胶囊形。</li>
+            <li>横版与竖版使用不同 layoutId，不用缩放和黑边假适配。</li>
+          </ul>
+        </div>
+        <div class="handoff-console">
+          <div class="console-bar">
+            <div class="output-tabs" role="tablist" aria-label="导出内容预览">
+              <button type="button" role="tab" aria-selected="true" data-output="prompt">剪辑指令</button>
+              <button type="button" role="tab" aria-selected="false" data-output="json">场景 JSON</button>
+              <button type="button" role="tab" aria-selected="false" data-output="jsx">ChatCut JSX</button>
+              <button type="button" role="tab" aria-selected="false" data-output="markdown">交接文档</button>
+            </div>
+            <button id="copyOutput" class="copy-button" type="button">复制当前内容</button>
+          </div>
+          <pre id="outputCode" tabindex="0" aria-live="polite"></pre>
+          <div id="copyStatus" class="copy-status" role="status" aria-live="polite"></div>
+        </div>
+        <div class="download-grid" aria-label="导出文件">
+          <button type="button" data-download="preview-png"><span>PNG</span><strong>成片静态预览</strong><small id="pngSpec">1920 × 1080</small></button>
+          <button type="button" data-download="composition-svg"><span>SVG</span><strong>双画面布局线框</strong><small>固定坐标与安全区</small></button>
+          <button type="button" data-download="config-json"><span>JSON</span><strong>场景配置</strong><small>两个素材槽位和 token</small></button>
+          <button type="button" data-download="chatcut-jsx"><span>JSX</span><strong>ChatCut 可编辑场景</strong><small>固定画布，秒级时间基准</small></button>
+          <button type="button" data-download="brief-md"><span>MD</span><strong>剪辑交接说明</strong><small>给剪辑师或 AI Agent</small></button>
+          <a href="/koubo/portrait-talk-theme-kit.zip" download><span>ZIP</span><strong>原始配色资产包</strong><small>portrait-talk-theme-kit 原件</small></a>
+        </div>
+      </section>
+
+      <section class="principles" aria-labelledby="principles-heading">
+        <div><p class="eyebrow">为什么这样设计</p><h2 id="principles-heading">口播垂直工具，先解决重复决策。</h2></div>
+        <ol>
+          <li><b>01</b><strong>证据优先</strong><p>软件操作、数据和结果不被抽象动效替代。</p></li>
+          <li><b>02</b><strong>构图可复用</strong><p>用具名 layoutId 沉淀成横竖版坐标，不靠每次手拖。</p></li>
+          <li><b>03</b><strong>交接可执行</strong><p>AI 拿到的是代码、结构和约束，不是一句「做得高级一点」。</p></li>
+        </ol>
+      </section>
+    </main>
+
+    <footer>
+      <div><strong>口播画布</strong><p>让录屏和主讲人，在每一种画幅里各就各位。</p></div>
+      <div class="footer-links">
+        <a href="/koubo/tokens/compositions.json">双画面布局 JSON</a>
+        <a href="/koubo/tokens/themes.json">原始主题 JSON</a>
+        <a href="/koubo/docs/chatcut-integration.md">ChatCut 文档</a>
+        <a href="https://www.majia.pro">majia.pro</a>
+      </div>
+    </footer>
+
+    <noscript>这个配置工具需要启用 JavaScript 才能实时预览与导出文件。</noscript>
+    <script src="/koubo/dual-studio.js?v=20260713-dual1"></script>
+  </body>
+</html>

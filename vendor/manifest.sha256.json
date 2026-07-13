@@ -1,0 +1,10 @@
+{
+  "algorithm": "sha256",
+  "lockedAt": "2026-07-13",
+  "files": {
+    "vendor/portrait-talk-theme-kit.zip": "c7fc2865486a5daeb90d1b151ff271031cc48b19867f64258144574d93dd356c",
+    "vendor/portrait-talk-theme-kit/tokens/themes.json": "bac17460acc1cf8632056947de9517a4f7a5a2265cbfa91f7a6a7cb250295610",
+    "vendor/portrait-talk-theme-kit/tokens/layouts.json": "d0543e3a21d8a54eb693d2a399b213c588eb5cc11a244b370127617224540fac",
+    "vendor/portrait-talk-theme-kit/components/portrait-talk-card.css": "341221ec6d6f68d963c607612631bcc2b8734673ea468d03d5f12079f6bd391e"
+  }
+}

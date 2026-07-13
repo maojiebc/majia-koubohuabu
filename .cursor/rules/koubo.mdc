@@ -1,0 +1,6 @@
+---
+description: Core rules for the Koubo Huabu dual-source video composition tool
+alwaysApply: true
+---
+
+Read `AGENTS.md` completely before editing. Preserve the two-source model, locked vendor assets, fixed-pixel landscape/portrait variants, local-only media handling, one-line subtitles, and zero runtime dependencies. Use `config/compositions.json` as the only composition registry and run `npm run check` before completion.
