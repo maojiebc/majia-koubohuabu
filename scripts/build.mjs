@@ -16,6 +16,7 @@ const copies = [
   ["src/dual-studio.css", "dist/koubo/dual-studio.css"],
   ["src/dual-studio.js", "dist/koubo/dual-studio.js"],
   ["src/favicon.svg", "dist/favicon.svg"],
+  ["src/favicon.svg", "dist/koubo/favicon.svg"],
   ["config/compositions.json", "dist/koubo/tokens/compositions.json"],
   ["docs/chatcut-integration.md", "dist/koubo/docs/chatcut-integration.md"],
   ["vendor/portrait-talk-theme-kit.zip", "dist/koubo/portrait-talk-theme-kit.zip"],

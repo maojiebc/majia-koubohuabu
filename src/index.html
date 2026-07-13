@@ -10,8 +10,8 @@
     <meta property="og:description" content="导入录屏和主讲人两路素材，在横版 16:9 与竖版 9:16 中选择口播构图、预览效果，并导出 ChatCut JSX、JSON 与剪辑交接文档。" />
     <meta property="og:url" content="https://www.majia.pro/koubo" />
     <link rel="canonical" href="https://www.majia.pro/koubo" />
-    <link rel="icon" href="/favicon.svg" />
-    <link rel="stylesheet" href="/koubo/dual-studio.css?v=20260713-dual1" />
+    <link rel="icon" href="/koubo/favicon.svg" />
+    <link rel="stylesheet" href="/koubo/dual-studio.css?v=20260713-dual2" />
     <title>口播画布｜录屏 + 主讲人双画面构图工具</title>
   </head>
   <body>
@@ -103,37 +103,41 @@
               <span class="panel-note">延用原始 8 套配色</span>
             </div>
             <div id="themeGrid" class="theme-grid" role="radiogroup" aria-label="8 套包装配色"></div>
-            <div class="form-grid">
-              <label class="field field-wide">
-                <span>顶栏主题</span>
-                <input id="topicInput" type="text" maxlength="18" value="连锁餐饮 AI 实战" />
-              </label>
-              <label class="field field-wide">
-                <span>当前观点</span>
-                <input id="pointInput" type="text" maxlength="22" value="真实录屏是信任的证据" />
-              </label>
-              <label class="field field-wide">
-                <span>字幕样例</span>
-                <input id="subtitleInput" type="text" maxlength="13" value="先看操作，再讲方法" />
-              </label>
-              <label class="field">
-                <span>录屏适配</span>
-                <select id="screenFitSelect">
-                  <option value="auto">跟随版式建议</option>
-                  <option value="contain">完整显示（contain）</option>
-                  <option value="cover">聚焦裁切（cover）</option>
-                </select>
-              </label>
-              <label class="field">
-                <span>人物形态</span>
-                <select id="speakerShapeSelect">
-                  <option value="auto">跟随版式建议</option>
-                  <option value="circle">正圆画中画</option>
-                  <option value="rounded">圆角矩形</option>
-                  <option value="cutout">透明抠像</option>
-                </select>
-              </label>
-            </div>
+            <details class="advanced-fields">
+              <summary><strong>微调文案与裁切</strong><small>已带默认文案，不改也能直接导出</small></summary>
+              <div class="form-grid">
+                <label class="field field-wide">
+                  <span>顶栏主题</span>
+                  <input id="topicInput" type="text" maxlength="18" value="连锁餐饮 AI 实战" />
+                </label>
+                <label class="field field-wide">
+                  <span>当前观点</span>
+                  <input id="pointInput" type="text" maxlength="22" value="真实录屏是信任的证据" />
+                </label>
+                <label class="field field-wide">
+                  <span>字幕样例</span>
+                  <input id="subtitleInput" type="text" maxlength="13" value="先看操作，再讲方法" />
+                </label>
+                <label class="field">
+                  <span>录屏适配</span>
+                  <select id="screenFitSelect">
+                    <option value="auto">跟随版式建议</option>
+                    <option value="contain">完整显示（contain）</option>
+                    <option value="cover">聚焦裁切（cover）</option>
+                  </select>
+                </label>
+                <label class="field">
+                  <span>人物形态</span>
+                  <select id="speakerShapeSelect">
+                    <option value="auto">跟随版式建议</option>
+                    <option value="circle">正圆画中画</option>
+                    <option value="rounded">圆角矩形</option>
+                    <option value="cutout">透明抠像</option>
+                  </select>
+                </label>
+              </div>
+              <button id="resetContent" class="reset-content" type="button">恢复默认文案</button>
+            </details>
             <div class="toggle-list">
               <label class="toggle-row">
                 <span><strong>显示单行字幕</strong><small>字幕永远避让人像与关键 UI</small></span>
@@ -216,7 +220,7 @@
           <button type="button" data-download="config-json"><span>JSON</span><strong>场景配置</strong><small>两个素材槽位和 token</small></button>
           <button type="button" data-download="chatcut-jsx"><span>JSX</span><strong>ChatCut 可编辑场景</strong><small>固定画布，秒级时间基准</small></button>
           <button type="button" data-download="brief-md"><span>MD</span><strong>剪辑交接说明</strong><small>给剪辑师或 AI Agent</small></button>
-          <a href="/koubo/portrait-talk-theme-kit.zip" download><span>ZIP</span><strong>原始配色资产包</strong><small>portrait-talk-theme-kit 原件</small></a>
+          <button type="button" data-download="handoff-pack"><span>ZIP</span><strong>交接包一键下载</strong><small>PNG + SVG + JSON + JSX + MD</small></button>
         </div>
       </section>
 
@@ -241,6 +245,6 @@
     </footer>
 
     <noscript>这个配置工具需要启用 JavaScript 才能实时预览与导出文件。</noscript>
-    <script src="/koubo/dual-studio.js?v=20260713-dual1"></script>
+    <script src="/koubo/dual-studio.js?v=20260713-dual2"></script>
   </body>
 </html>

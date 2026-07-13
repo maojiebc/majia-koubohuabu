@@ -1,6 +1,6 @@
 {
   "name": "majia-koubohuabu",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "private": true,
   "description": "录屏画面 + 主讲人画面的横竖版口播构图与 ChatCut 交接工具",
   "type": "module",

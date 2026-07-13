@@ -55,7 +55,7 @@ for (const format of data.formats || []) {
 if (layoutCount !== 8) fail(`expected 8 dual-source layouts, got ${layoutCount}`);
 
 const html = read("src/index.html");
-for (const marker of ["录屏画面 1", "主讲人画面 2", "dual-studio.css", "dual-studio.js", "tokens/compositions.json"]) {
+for (const marker of ["录屏画面 1", "主讲人画面 2", "dual-studio.css", "dual-studio.js", "tokens/compositions.json", "advanced-fields", "handoff-pack", "/koubo/favicon.svg"]) {
   if (!html.includes(marker)) fail(`src/index.html missing marker: ${marker}`);
 }
 if (/<script[^>]+src=["']https?:\/\//i.test(html) || /<link[^>]+href=["']https?:\/\/[^"']+\.css/i.test(html)) {
@@ -70,6 +70,7 @@ try {
 
 for (const relative of [
   "dist/favicon.svg",
+  "dist/koubo/favicon.svg",
   "dist/koubo/index.html",
   "dist/koubo/dual-studio.css",
   "dist/koubo/dual-studio.js",

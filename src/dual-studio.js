@@ -37,6 +37,11 @@
   const currentLayout = () => currentFormat().layouts.find((item) => item.id === state.layoutId) || currentFormat().layouts[0];
   const effectiveScreenFit = () => state.screenFit === "auto" ? currentLayout().screenFit : state.screenFit;
   const effectiveSpeakerShape = () => state.speakerShape === "auto" ? currentLayout().speakerShape : state.speakerShape;
+  const effectiveContent = () => ({
+    topic: String(state.content.topic ?? "").trim() || DEFAULT_CONTENT.topic,
+    point: String(state.content.point ?? "").trim() || DEFAULT_CONTENT.point,
+    subtitle: String(state.content.subtitle ?? "").trim() || DEFAULT_CONTENT.subtitle,
+  });
 
   function escapeHtml(value) {
     return String(value ?? "")
@@ -249,6 +254,7 @@
     const portrait = canvas.height > canvas.width;
     const speakerShape = effectiveSpeakerShape();
     const speakerGeometry = getSpeakerGeometry(layout, speakerShape);
+    const content = effectiveContent();
 
     elements.videoCanvas.style.setProperty("--canvas-width", `${canvas.width}px`);
     elements.videoCanvas.style.setProperty("--canvas-height", `${canvas.height}px`);
@@ -269,19 +275,19 @@
     elements.speakerShell.className = `media-shell speaker-shell shape-${speakerShape}`;
 
     setBox(elements.canvasTitle, layout.title);
-    elements.canvasTitle.textContent = state.content.topic;
+    elements.canvasTitle.textContent = content.topic;
     elements.canvasTitle.style.color = semantic.textPrimary;
     elements.canvasTitle.style.fontSize = `${portrait ? 42 : 32}px`;
 
     setBox(elements.canvasPoint, layout.point);
-    elements.canvasPoint.textContent = state.content.point;
+    elements.canvasPoint.textContent = content.point;
     elements.canvasPoint.style.color = semantic.emphasis;
-    const pointLength = Array.from(state.content.point).length;
+    const pointLength = Array.from(content.point).length;
     elements.canvasPoint.style.fontSize = `${portrait ? (pointLength > 14 ? 42 : 52) : (pointLength > 18 ? 25 : 29)}px`;
     elements.canvasPoint.style.justifyContent = layout.id === "portrait-screen-top-speaker-center" ? "center" : "flex-start";
 
     setBox(elements.canvasSubtitle, layout.subtitle);
-    elements.canvasSubtitle.textContent = state.content.subtitle;
+    elements.canvasSubtitle.textContent = content.subtitle;
     elements.canvasSubtitle.style.fontSize = `${layout.subtitle.fontSize}px`;
     elements.canvasSubtitle.hidden = !state.showSubtitle;
 
@@ -336,14 +342,15 @@
 
   function getPropertySchema() {
     const theme = currentTheme();
+    const content = effectiveContent();
     return [
       { key: "screenVideo", label: "录屏视频 1", type: "video", defaultValue: "" },
       { key: "screenImage", label: "录屏图片 1", type: "image", defaultValue: "" },
       { key: "speakerVideo", label: "主讲人视频 2", type: "video", defaultValue: "" },
       { key: "speakerImage", label: "主讲人图片 2", type: "image", defaultValue: "" },
-      { key: "topic", label: "顶栏主题", type: "text", defaultValue: state.content.topic },
-      { key: "point", label: "当前观点", type: "text", defaultValue: state.content.point },
-      { key: "subtitle", label: "单行字幕", type: "text", defaultValue: state.content.subtitle },
+      { key: "topic", label: "顶栏主题", type: "text", defaultValue: content.topic },
+      { key: "point", label: "当前观点", type: "text", defaultValue: content.point },
+      { key: "subtitle", label: "单行字幕", type: "text", defaultValue: content.subtitle },
       { key: "screenFit", label: "录屏裁切", type: "select", defaultValue: effectiveScreenFit(), options: ["contain", "cover"] },
       { key: "speakerShape", label: "人物形态", type: "select", defaultValue: effectiveSpeakerShape(), options: ["circle", "rounded", "cutout"] },
       { key: "showSubtitle", label: "显示字幕", type: "boolean", defaultValue: state.showSubtitle },
@@ -376,7 +383,7 @@
         mode: theme.mode,
         semantic: { ...theme.semantic },
       },
-      content: { ...state.content },
+      content: effectiveContent(),
       assetSlots: [getSlotSpec("screen"), getSlotSpec("speaker")],
       subtitle: {
         visible: state.showSubtitle,
@@ -415,15 +422,16 @@
     const theme = currentTheme();
     const screen = getSlotSpec("screen");
     const speaker = getSlotSpec("speaker");
+    const content = effectiveContent();
     return `请在当前 ChatCut 项目中建立「录屏画面 1 + 主讲人画面 2」的双源口播场景。
 
 场景规格
 - 画幅：${format.name}，${format.canvas.width} × ${format.canvas.height}，${format.canvas.fps}fps。
 - 版式：${layout.name}（layoutId: ${layout.id} v${layout.layoutVersion}）。
 - 包装主题：${theme.index} ${theme.name}，来自 portrait-talk-theme-kit 原始 token。
-- 顶栏：${state.content.topic}
-- 观点：${state.content.point}
-- 字幕：${state.content.subtitle}
+- 顶栏：${content.topic}
+- 观点：${content.point}
+- 字幕：${content.subtitle}
 
 两个素材槽位
 1. 录屏画面 1：${JSON.stringify(screen.box)}，fit=${screen.fit}。它是主证据，保护当前讲解的字段、数值、按钮和光标。
@@ -449,6 +457,7 @@
     const format = currentFormat();
     const layout = currentLayout();
     const theme = currentTheme();
+    const content = effectiveContent();
     return `# 双画面口播剪辑交接
 
 ## 场景规格
@@ -471,9 +480,9 @@
 
 ## 可见文案
 
-- 顶栏主题：${state.content.topic}
-- 当前观点：${state.content.point}
-- 字幕样例：${state.content.subtitle}
+- 顶栏主题：${content.topic}
+- 当前观点：${content.point}
+- 字幕样例：${content.subtitle}
 
 ## 图层与声音
 
@@ -625,7 +634,7 @@ export default Component;`;
     ctx.closePath();
   }
 
-  function drawMediaFit(ctx, media, box, fit, objectPosition = "center") {
+  function drawMediaFit(ctx, media, box, fit, focusY = 0.5) {
     if (!media?.element) return false;
     const element = media.element;
     const sourceWidth = media.type === "video" ? element.videoWidth : element.naturalWidth;
@@ -635,7 +644,7 @@ export default Component;`;
     const width = sourceWidth * scale;
     const height = sourceHeight * scale;
     const x = box.x + (box.w - width) / 2;
-    const y = objectPosition === "bottom" ? box.y + box.h - height : box.y + (box.h - height) / 2;
+    const y = box.y + (box.h - height) * focusY;
     ctx.drawImage(element, x, y, width, height);
     return true;
   }
@@ -693,6 +702,7 @@ export default Component;`;
     const portrait = canvas.height > canvas.width;
     const shape = effectiveSpeakerShape();
     const speaker = getSpeakerGeometry(layout, shape);
+    const content = effectiveContent();
 
     ctx.fillStyle = s.canvas;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -708,7 +718,7 @@ export default Component;`;
     }
     ctx.restore();
 
-    drawSingleLine(ctx, state.content.topic, { x: layout.title.x + 28, y: layout.title.y, w: layout.title.w - 28, h: layout.title.h }, { color: s.textPrimary, size: portrait ? 42 : 32, weight: 800 });
+    drawSingleLine(ctx, content.topic, { x: layout.title.x + 28, y: layout.title.y, w: layout.title.w - 28, h: layout.title.h }, { color: s.textPrimary, size: portrait ? 42 : 32, weight: 800 });
     ctx.fillStyle = s.accent;
     ctx.fillRect(layout.title.x, layout.title.y + layout.title.h * .18, 8, layout.title.h * .64);
 
@@ -754,7 +764,7 @@ export default Component;`;
       ctx.fillRect(speaker.x, speaker.y, speaker.w, speaker.h);
     }
     const speakerFit = shape === "cutout" ? "contain" : "cover";
-    if (!drawMediaFit(ctx, state.media.speaker, speaker, speakerFit, shape === "cutout" ? "bottom" : "center")) {
+    if (!drawMediaFit(ctx, state.media.speaker, speaker, speakerFit, shape === "cutout" ? 1 : 0.18)) {
       drawSpeakerPlaceholder(ctx, speaker, s.speakerFigure);
     }
     ctx.restore();
@@ -774,15 +784,15 @@ export default Component;`;
 
     ctx.fillStyle = s.accent;
     ctx.fillRect(layout.point.x, layout.point.y + layout.point.h / 2 - 3, 48, 6);
-    const pointSize = portrait ? (Array.from(state.content.point).length > 14 ? 42 : 52) : (Array.from(state.content.point).length > 18 ? 25 : 29);
-    drawSingleLine(ctx, state.content.point, { x: layout.point.x + 68, y: layout.point.y, w: layout.point.w - 68, h: layout.point.h }, { color: s.emphasis, size: pointSize, weight: 750 });
+    const pointSize = portrait ? (Array.from(content.point).length > 14 ? 42 : 52) : (Array.from(content.point).length > 18 ? 25 : 29);
+    drawSingleLine(ctx, content.point, { x: layout.point.x + 68, y: layout.point.y, w: layout.point.w - 68, h: layout.point.h }, { color: s.emphasis, size: pointSize, weight: 750 });
 
     if (state.showSubtitle) {
       ctx.save();
       roundRectPath(ctx, layout.subtitle.x, layout.subtitle.y, layout.subtitle.w, layout.subtitle.h, 18);
       ctx.fillStyle = "rgba(0,0,0,0.78)";
       ctx.fill();
-      drawSingleLine(ctx, state.content.subtitle, layout.subtitle, { color: "#FFFFFF", size: layout.subtitle.fontSize, weight: 750, align: "center" });
+      drawSingleLine(ctx, content.subtitle, layout.subtitle, { color: "#FFFFFF", size: layout.subtitle.fontSize, weight: 750, align: "center" });
       ctx.restore();
     }
 
@@ -810,9 +820,78 @@ export default Component;`;
     <text x="${layout.screen.x + 24}" y="${layout.screen.y + 56}" font-size="28">1  ${escapeXml("录屏画面")}</text>
     <text x="${speaker.x + 20}" y="${speaker.y + 48}" font-size="28">2  ${escapeXml("主讲人")}</text>
   </g>
-  <text x="${layout.subtitle.x + layout.subtitle.w / 2}" y="${layout.subtitle.y + layout.subtitle.h / 2}" fill="#fff" font-family="PingFang SC, Microsoft YaHei, sans-serif" font-size="${Math.min(layout.subtitle.fontSize, 56)}" text-anchor="middle" dominant-baseline="middle">${escapeXml(state.content.subtitle)}</text>
+  <text x="${layout.subtitle.x + layout.subtitle.w / 2}" y="${layout.subtitle.y + layout.subtitle.h / 2}" fill="#fff" font-family="PingFang SC, Microsoft YaHei, sans-serif" font-size="${Math.min(layout.subtitle.fontSize, 56)}" text-anchor="middle" dominant-baseline="middle">${escapeXml(effectiveContent().subtitle)}</text>
   <metadata>${escapeXml(JSON.stringify({ layoutId: layout.id, layoutVersion: layout.layoutVersion, screenFit: effectiveScreenFit(), speakerShape }))}</metadata>
 </svg>`;
+  }
+
+  function crc32(bytes) {
+    let table = crc32.table;
+    if (!table) {
+      table = crc32.table = new Uint32Array(256);
+      for (let n = 0; n < 256; n += 1) {
+        let c = n;
+        for (let k = 0; k < 8; k += 1) c = c & 1 ? 0xedb88320 ^ (c >>> 1) : c >>> 1;
+        table[n] = c >>> 0;
+      }
+    }
+    let crc = 0xffffffff;
+    for (let i = 0; i < bytes.length; i += 1) crc = table[(crc ^ bytes[i]) & 0xff] ^ (crc >>> 8);
+    return (crc ^ 0xffffffff) >>> 0;
+  }
+
+  // 零依赖 store 模式 ZIP：交接包体积以 PNG 为主，压缩收益低，保持可读实现优先。
+  function buildZip(files) {
+    const encoder = new TextEncoder();
+    const stamp = new Date();
+    const dosTime = (stamp.getHours() << 11) | (stamp.getMinutes() << 5) | Math.floor(stamp.getSeconds() / 2);
+    const dosDate = ((stamp.getFullYear() - 1980) << 9) | ((stamp.getMonth() + 1) << 5) | stamp.getDate();
+    const parts = [];
+    const centrals = [];
+    let offset = 0;
+
+    for (const file of files) {
+      const name = encoder.encode(file.name);
+      const crc = crc32(file.data);
+      const local = new DataView(new ArrayBuffer(30));
+      local.setUint32(0, 0x04034b50, true);
+      local.setUint16(4, 20, true);
+      local.setUint16(6, 0x0800, true);
+      local.setUint16(8, 0, true);
+      local.setUint16(10, dosTime, true);
+      local.setUint16(12, dosDate, true);
+      local.setUint32(14, crc, true);
+      local.setUint32(18, file.data.length, true);
+      local.setUint32(22, file.data.length, true);
+      local.setUint16(26, name.length, true);
+      local.setUint16(28, 0, true);
+      parts.push(new Uint8Array(local.buffer), name, file.data);
+
+      const central = new DataView(new ArrayBuffer(46));
+      central.setUint32(0, 0x02014b50, true);
+      central.setUint16(4, 20, true);
+      central.setUint16(6, 20, true);
+      central.setUint16(8, 0x0800, true);
+      central.setUint16(10, 0, true);
+      central.setUint16(12, dosTime, true);
+      central.setUint16(14, dosDate, true);
+      central.setUint32(16, crc, true);
+      central.setUint32(20, file.data.length, true);
+      central.setUint32(24, file.data.length, true);
+      central.setUint16(28, name.length, true);
+      central.setUint32(42, offset, true);
+      centrals.push(new Uint8Array(central.buffer), name);
+      offset += 30 + name.length + file.data.length;
+    }
+
+    const centralSize = centrals.reduce((total, part) => total + part.length, 0);
+    const end = new DataView(new ArrayBuffer(22));
+    end.setUint32(0, 0x06054b50, true);
+    end.setUint16(8, files.length, true);
+    end.setUint16(10, files.length, true);
+    end.setUint32(12, centralSize, true);
+    end.setUint32(16, offset, true);
+    return new Blob([...parts, ...centrals, new Uint8Array(end.buffer)], { type: "application/zip" });
   }
 
   function downloadBlob(blob, filename) {
@@ -839,6 +918,17 @@ export default Component;`;
     if (type === "config-json") return downloadText(JSON.stringify(getConfig(), null, 2), `${base}-scene.json`, "application/json;charset=utf-8");
     if (type === "chatcut-jsx") return downloadText(getChatCutJsx(), `${base}-chatcut.jsx`, "text/javascript;charset=utf-8");
     if (type === "brief-md") return downloadText(getMarkdown(), `${base}-handoff.md`, "text/markdown;charset=utf-8");
+    if (type === "handoff-pack") {
+      const encoder = new TextEncoder();
+      const png = new Uint8Array(await (await renderPreviewPng()).arrayBuffer());
+      return downloadBlob(buildZip([
+        { name: `${base}-preview.png`, data: png },
+        { name: `${base}-layout.svg`, data: encoder.encode(getCompositionSvg()) },
+        { name: `${base}-scene.json`, data: encoder.encode(JSON.stringify(getConfig(), null, 2)) },
+        { name: `${base}-chatcut.jsx`, data: encoder.encode(getChatCutJsx()) },
+        { name: `${base}-handoff.md`, data: encoder.encode(getMarkdown()) },
+      ]), `${base}-handoff-pack.zip`);
+    }
   }
 
   function bindEvents() {
@@ -848,6 +938,12 @@ export default Component;`;
         state.content[key] = event.target.value;
         updatePreview();
       });
+    });
+
+    elements.resetContent.addEventListener("click", () => {
+      state.content = { ...DEFAULT_CONTENT };
+      syncForm();
+      updatePreview();
     });
 
     elements.screenFitSelect.addEventListener("change", (event) => {
@@ -920,7 +1016,7 @@ export default Component;`;
   function cacheElements() {
     [
       "formatGrid", "compositionGrid", "themeGrid", "layoutCount",
-      "topicInput", "pointInput", "subtitleInput", "screenFitSelect", "speakerShapeSelect",
+      "topicInput", "pointInput", "subtitleInput", "resetContent", "screenFitSelect", "speakerShapeSelect",
       "subtitleToggle", "guideToggle", "screenUpload", "speakerUpload", "removeScreen", "removeSpeaker",
       "screenFileName", "speakerFileName", "previewStage", "previewViewport", "videoCanvas",
       "canvasTitle", "screenShell", "screenMedia", "speakerShell", "speakerMedia", "canvasPoint",

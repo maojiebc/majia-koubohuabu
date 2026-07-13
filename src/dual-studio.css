@@ -359,6 +359,45 @@ footer {
 }
 .field input:focus, .field select:focus { border-color: var(--signal); box-shadow: 0 0 0 2px rgba(200,73,50,.1); }
 
+.advanced-fields { border: 1px dashed var(--line-strong); background: #faf8f1; }
+.advanced-fields summary {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 13px 16px;
+  cursor: pointer;
+  list-style: none;
+}
+.advanced-fields summary::-webkit-details-marker { display: none; }
+.advanced-fields summary::before {
+  content: "+";
+  flex: none;
+  width: 18px;
+  height: 18px;
+  display: grid;
+  place-items: center;
+  align-self: center;
+  border: 1px solid var(--line-strong);
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1;
+}
+.advanced-fields[open] summary::before { content: "−"; border-color: var(--ink); color: var(--ink); }
+.advanced-fields summary strong { font-size: 12px; }
+.advanced-fields summary small { color: var(--muted); font-size: 10px; }
+.advanced-fields summary:hover strong { color: var(--signal); }
+.advanced-fields .form-grid { padding: 6px 16px 0; }
+.reset-content {
+  margin: 14px 16px 16px;
+  padding: 8px 12px;
+  border: 1px solid var(--line-strong);
+  color: var(--muted);
+  background: transparent;
+  cursor: pointer;
+  font-size: 11px;
+}
+.reset-content:hover { border-color: var(--signal); color: var(--signal); }
+
 .toggle-list { margin-top: 16px; border-top: 1px solid var(--line); }
 .toggle-row {
   min-height: 62px;

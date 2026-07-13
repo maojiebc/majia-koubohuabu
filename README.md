@@ -11,7 +11,8 @@
 - 每种画幅 4 个具名双画面版式，共 8 个 `layoutId`。
 - 录屏支持 `contain` / `cover`；人物支持正圆、圆角矩形和透明抠像。
 - 使用原始 `portrait-talk-theme-kit` 的 8 套配色 token，原包通过 SHA-256 锁定。
-- 导出 PNG、SVG、场景 JSON、ChatCut JSX 与 Markdown 剪辑交接文档。
+- 三段包装文案自带默认值并收入「微调」折叠区，不填写文字也能直接出片。
+- 导出 PNG、SVG、场景 JSON、ChatCut JSX、Markdown 交接文档，或一键打包为交接 ZIP。
 
 ## 本地开发
 
