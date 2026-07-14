@@ -6,15 +6,20 @@ cd "$ROOT_DIR"
 
 INSTANCE_ID="${INSTANCE_ID:-i-bp11utfyrhwq52zu28yb}"
 REGION_ID="${REGION_ID:-cn-hangzhou}"
-OSS_ENDPOINT="${OSS_ENDPOINT:-oss-cn-shanghai.aliyuncs.com}"
-OSS_URI="${OSS_URI:-oss://supermajia-t/deploy/majia-koubohuabu.tar.gz}"
-OSS_PUBLIC_URL="${OSS_PUBLIC_URL:-https://supermajia-t.oss-cn-shanghai.aliyuncs.com/deploy/majia-koubohuabu.tar.gz}"
+OSS_ENDPOINT="${OSS_ENDPOINT:-oss-cn-hangzhou.aliyuncs.com}"
+OSS_URI="${OSS_URI:-oss://oneclip/deploy/majia-koubohuabu.tar.gz}"
 
 npm run check
 
 mkdir -p deploy
 COPYFILE_DISABLE=1 tar --format ustar -C dist/koubo -czf deploy/majia-koubohuabu.tar.gz .
-aliyun oss cp deploy/majia-koubohuabu.tar.gz "$OSS_URI" -f -e "$OSS_ENDPOINT"
+# 对象级 private ACL：桶是 public-read，产物必须单独收紧，服务器用短时签名 URL 拉取
+aliyun oss cp deploy/majia-koubohuabu.tar.gz "$OSS_URI" -f -e "$OSS_ENDPOINT" --acl private
+SIGNED_URL="$(aliyun oss sign "$OSS_URI" --timeout 600 -e "$OSS_ENDPOINT" | grep -o 'https://[^[:space:]]*' | head -1)"
+if [[ -z "$SIGNED_URL" ]]; then
+  echo "failed to presign $OSS_URI" >&2
+  exit 1
+fi
 
 REMOTE_SCRIPT="$(cat <<REMOTE
 #!/usr/bin/env bash
@@ -28,7 +33,7 @@ previous_dir=/var/www/personal-site/koubo.previous
 
 rm -rf "\$tmp_dir" "\$new_dir"
 mkdir -p "\$tmp_dir" "\$new_dir"
-curl -fsSL -o "\$tmp_tar" "$OSS_PUBLIC_URL"
+curl -fsSL -o "\$tmp_tar" "$SIGNED_URL"
 tar -xzf "\$tmp_tar" -C "\$tmp_dir"
 find "\$tmp_dir" -name '._*' -type f -delete
 cp -a "\$tmp_dir"/. "\$new_dir"/

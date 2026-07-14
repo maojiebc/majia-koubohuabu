@@ -2,7 +2,7 @@
 
 ## 线上环境
 
-- 地址：`https://www.majia.pro/koubo`
+- 地址：`https://www.majia.pro/koubo`（裸域 `majia.pro` 301 保路径跳转到 www）
 - ECS 区域：阿里云杭州 `cn-hangzhou`
 - ECS 公网 IP：`47.97.243.95`
 - 线上目录：`/var/www/personal-site/koubo`
@@ -32,8 +32,9 @@ INSTANCE_ID
 REGION_ID
 OSS_ENDPOINT
 OSS_URI
-OSS_PUBLIC_URL
 ```
+
+发布包上传 OSS 时使用对象级 `private` ACL，服务器通过 10 分钟时效的签名 URL 下载；产物不可匿名访问。
 
 ## 安全边界
 
@@ -42,6 +43,10 @@ OSS_PUBLIC_URL
 - 不替换 `/var/www/personal-site` 根目录。
 - 不修改 `t.oneclip.club`、餐饮体检 H5 或其他子域名。
 - 不修改 DNS，除非用户另行明确要求。
+
+## 响应头防护（服务器侧）
+
+`/koubo/` 路径由 nginx 下发独立的 `Content-Security-Policy`（default-src 'self'，图片/媒体额外放行 `blob:` 与 `data:`，脚本仅 self，无内联脚本），站点级下发 `Strict-Transport-Security`、`X-Frame-Options`、`X-Content-Type-Options`、`Referrer-Policy`、`Permissions-Policy`。片段文件在服务器 `/etc/nginx/snippets/majia-site-headers.conf` 与 `/etc/nginx/snippets/koubo-csp.conf`。工具本身零内联脚本、零第三方运行时、素材只走本地 `blob:`，是 CSP 能收这么紧的前提，改前端时不要引入内联 `<script>`。
 
 ## 发布后验证
 
