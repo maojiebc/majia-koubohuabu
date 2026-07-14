@@ -43,6 +43,12 @@
     subtitle: String(state.content.subtitle ?? "").trim() || DEFAULT_CONTENT.subtitle,
   });
 
+  // 观点字号的唯一规则：预览、PNG、ChatCut JSX 三个出口共用
+  const pointFontSize = (portrait, text) => {
+    const length = Array.from(String(text ?? "")).length;
+    return portrait ? (length > 14 ? 42 : 52) : (length > 18 ? 25 : 29);
+  };
+
   function escapeHtml(value) {
     return String(value ?? "")
       .replaceAll("&", "&amp;")
@@ -282,8 +288,7 @@
     setBox(elements.canvasPoint, layout.point);
     elements.canvasPoint.textContent = content.point;
     elements.canvasPoint.style.color = semantic.emphasis;
-    const pointLength = Array.from(content.point).length;
-    elements.canvasPoint.style.fontSize = `${portrait ? (pointLength > 14 ? 42 : 52) : (pointLength > 18 ? 25 : 29)}px`;
+    elements.canvasPoint.style.fontSize = `${pointFontSize(portrait, content.point)}px`;
     elements.canvasPoint.style.justifyContent = layout.id === "portrait-screen-top-speaker-center" ? "center" : "flex-start";
 
     setBox(elements.canvasSubtitle, layout.subtitle);
@@ -511,7 +516,8 @@
     const theme = currentTheme();
     const s = theme.semantic;
     const screen = layout.screen;
-    const speaker = getSpeakerGeometry();
+    const speakerRaw = layout.speaker;
+    const speakerCircle = getSpeakerGeometry(layout, "circle");
     const subtitle = layout.subtitle;
     const title = layout.title;
     const point = layout.point;
@@ -538,13 +544,19 @@ const Component = ({ item }) => {
   const speakerShape = props.speakerShape || "${shape}";
   const speakerIsCutout = speakerShape === "cutout";
   const speakerIsCircle = speakerShape === "circle";
+  const speakerBox = speakerIsCircle
+    ? { left: ${speakerCircle.x}, top: ${speakerCircle.y}, width: ${speakerCircle.w}, height: ${speakerCircle.h} }
+    : { left: ${speakerRaw.x}, top: ${speakerRaw.y}, width: ${speakerRaw.w}, height: ${speakerRaw.h} };
+  const pointLength = Array.from(String(props.point || "")).length;
+  const pointSize = ${portrait ? "pointLength > 14 ? 42 : 52" : "pointLength > 18 ? 25 : 29"};
 
   return (
     <div data-scene-id="koubo-dual-source" data-layout-id="${layout.id}" style={{
       position: "absolute", inset: 0, width: ${format.canvas.width}, height: ${format.canvas.height},
-      overflow: "hidden", opacity, background: props.canvasColor || "${s.canvas}",
+      overflow: "hidden", opacity, background: props.canvasColor || "${theme.gradient || s.canvas}",
       color: props.textColor || "${s.textPrimary}", fontFamily: "PingFang SC, Microsoft YaHei, Noto Sans SC, sans-serif"
     }}>
+      <div id="group-grid" style={{ position: "absolute", inset: 0, opacity: 0.08, pointerEvents: "none", backgroundImage: "linear-gradient(${s.textPrimary} 2px, transparent 2px), linear-gradient(90deg, ${s.textPrimary} 2px, transparent 2px)", backgroundSize: "48px 48px" }} />
       <div id="group-title" style={{ position: "absolute", left: ${title.x}, top: ${title.y}, width: ${title.w}, height: ${title.h}, display: "flex", alignItems: "center", gap: 20, fontSize: ${portrait ? 42 : 32}, fontWeight: 800, whiteSpace: "nowrap" }}>
         <span style={{ width: 8, height: "65%", background: props.accentColor || "${s.accent}" }} />{props.topic}
       </div>
@@ -558,11 +570,11 @@ const Component = ({ item }) => {
         <Media video={props.screenVideo} image={props.screenImage} style={{ position: "absolute", left: 0, top: 38, width: "100%", height: ${Math.max(1, screen.h - 38)}, objectFit: screenFit, objectPosition: "50% 50%" }} />
       </div>
 
-      <div id="group-speaker-2" style={{ position: "absolute", left: ${speaker.x}, top: ${speaker.y}, width: ${speaker.w}, height: ${speaker.h}, overflow: speakerIsCutout ? "visible" : "hidden", border: speakerIsCutout ? "none" : \`4px solid \${props.accentColor || "${s.accent}"}\`, borderRadius: speakerIsCircle ? "50%" : ${layout.speaker.radius || 28}, background: speakerIsCutout ? "transparent" : "${s.speakerSurface}", boxShadow: speakerIsCutout ? "none" : "0 18px 45px ${s.shadow}" }}>
+      <div id="group-speaker-2" style={{ position: "absolute", ...speakerBox, overflow: speakerIsCutout ? "visible" : "hidden", border: speakerIsCutout ? "none" : \`4px solid \${props.accentColor || "${s.accent}"}\`, borderRadius: speakerIsCircle ? "50%" : ${layout.speaker.radius || 28}, background: speakerIsCutout ? "transparent" : "${s.speakerSurface}", boxShadow: speakerIsCutout ? "none" : "0 18px 45px ${s.shadow}" }}>
         <Media video={props.speakerVideo} image={props.speakerImage} style={{ width: "100%", height: "100%", objectFit: speakerIsCutout ? "contain" : "cover", objectPosition: speakerIsCutout ? "50% 100%" : "50% 18%" }} />
       </div>
 
-      <div id="group-point" style={{ position: "absolute", left: ${point.x}, top: ${point.y}, width: ${point.w}, height: ${point.h}, display: "flex", alignItems: "center", color: "${s.emphasis}", fontSize: ${portrait ? 52 : 29}, fontWeight: 750, whiteSpace: "nowrap" }}>
+      <div id="group-point" style={{ position: "absolute", left: ${point.x}, top: ${point.y}, width: ${point.w}, height: ${point.h}, display: "flex", alignItems: "center", color: "${s.emphasis}", fontSize: pointSize, fontWeight: 750, whiteSpace: "nowrap" }}>
         <span style={{ width: 48, height: 6, marginRight: 20, background: props.accentColor || "${s.accent}" }} />{props.point}
       </div>
 
@@ -621,6 +633,38 @@ export default Component;`;
     (isScreen ? elements.screenFileName : elements.speakerFileName).textContent = file ? file.name : "尚未选择素材";
     (isScreen ? elements.removeScreen : elements.removeSpeaker).hidden = !file;
     updatePreview();
+  }
+
+  // 主题渐变固定为 linear-gradient(<deg>, #hex <pct>%, ...)，check.mjs 有格式守卫
+  function parseThemeGradient(gradient) {
+    const match = /^linear-gradient\(\s*([\d.]+)deg\s*,\s*(.+)\)$/.exec(gradient || "");
+    if (!match) return null;
+    const stops = [];
+    for (const part of match[2].split(",")) {
+      const stop = /^\s*(#[0-9A-Fa-f]{6})\s+([\d.]+)%\s*$/.exec(part);
+      if (!stop) return null;
+      stops.push({ color: stop[1], offset: Math.min(1, Math.max(0, Number(stop[2]) / 100)) });
+    }
+    return stops.length >= 2 ? { angle: Number(match[1]), stops } : null;
+  }
+
+  function fillThemeBackground(ctx, theme, s, width, height) {
+    const parsed = parseThemeGradient(theme.gradient);
+    if (!parsed) {
+      ctx.fillStyle = s.canvas;
+      ctx.fillRect(0, 0, width, height);
+      return;
+    }
+    const rad = parsed.angle * Math.PI / 180;
+    const dirX = Math.sin(rad);
+    const dirY = -Math.cos(rad);
+    const lineLength = Math.abs(width * dirX) + Math.abs(height * dirY);
+    const cx = width / 2;
+    const cy = height / 2;
+    const fill = ctx.createLinearGradient(cx - dirX * lineLength / 2, cy - dirY * lineLength / 2, cx + dirX * lineLength / 2, cy + dirY * lineLength / 2);
+    for (const stop of parsed.stops) fill.addColorStop(stop.offset, stop.color);
+    ctx.fillStyle = fill;
+    ctx.fillRect(0, 0, width, height);
   }
 
   function roundRectPath(ctx, x, y, w, h, radius) {
@@ -704,8 +748,7 @@ export default Component;`;
     const speaker = getSpeakerGeometry(layout, shape);
     const content = effectiveContent();
 
-    ctx.fillStyle = s.canvas;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    fillThemeBackground(ctx, theme, s, canvas.width, canvas.height);
     ctx.save();
     ctx.globalAlpha = .08;
     ctx.strokeStyle = s.textPrimary;
@@ -784,7 +827,7 @@ export default Component;`;
 
     ctx.fillStyle = s.accent;
     ctx.fillRect(layout.point.x, layout.point.y + layout.point.h / 2 - 3, 48, 6);
-    const pointSize = portrait ? (Array.from(content.point).length > 14 ? 42 : 52) : (Array.from(content.point).length > 18 ? 25 : 29);
+    const pointSize = pointFontSize(portrait, content.point);
     drawSingleLine(ctx, content.point, { x: layout.point.x + 68, y: layout.point.y, w: layout.point.w - 68, h: layout.point.h }, { color: s.emphasis, size: pointSize, weight: 750 });
 
     if (state.showSubtitle) {

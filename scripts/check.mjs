@@ -33,6 +33,12 @@ for (const [relative, expected] of Object.entries(lock.files)) {
 const themes = JSON.parse(read("vendor/portrait-talk-theme-kit/tokens/themes.json"));
 if (themes.themes?.length !== 8) fail("portrait-talk-theme-kit must keep exactly 8 original themes");
 
+// PNG 渲染器用同一格式解析主题渐变；若 vendor 渐变格式变化，这里先失败
+const gradientPattern = /^linear-gradient\(\s*[\d.]+deg(\s*,\s*#[0-9A-Fa-f]{6}\s+[\d.]+%){2,}\s*\)$/;
+for (const theme of themes.themes || []) {
+  if (theme.gradient && !gradientPattern.test(theme.gradient)) fail(`theme gradient not canvas-parseable: ${theme.id}`);
+}
+
 const data = JSON.parse(read("config/compositions.json"));
 const ids = new Set();
 let layoutCount = 0;

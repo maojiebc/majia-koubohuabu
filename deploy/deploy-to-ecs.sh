@@ -62,10 +62,22 @@ INVOKE_JSON="$(aliyun ecs RunCommand \
   --Timeout 120)"
 
 INVOKE_ID="$(printf '%s' "$INVOKE_JSON" | node -e "let s=''; process.stdin.on('data', d => s += d); process.stdin.on('end', () => console.log(JSON.parse(s).InvokeId));")"
-sleep 3
 
-aliyun ecs DescribeInvocationResults --RegionId "$REGION_ID" --InvokeId "$INVOKE_ID" \
-  | node -e "let s=''; process.stdin.on('data', d => s += d); process.stdin.on('end', () => { const r = JSON.parse(s).Invocation.InvocationResults.InvocationResult[0]; console.log(r.InvocationStatus + ' exit=' + r.ExitCode); if (r.Output) console.log(Buffer.from(r.Output, 'base64').toString()); if (r.ErrorInfo) console.error(r.ErrorInfo); process.exit(r.ExitCode || 0); });"
+# 轮询到终态再继续：远端命令 Timeout=120s，本地最多等 150s。
+# 只有 InvocationStatus=Success 且 ExitCode 严格为 0 才算部署成功，否则中止，不做线上校验。
+INVOKE_RESULT=""
+INVOKE_STATUS="Pending"
+for _ in $(seq 1 50); do
+  sleep 3
+  INVOKE_RESULT="$(aliyun ecs DescribeInvocationResults --RegionId "$REGION_ID" --InvokeId "$INVOKE_ID")"
+  INVOKE_STATUS="$(printf '%s' "$INVOKE_RESULT" | node -e "let s=''; process.stdin.on('data', d => s += d); process.stdin.on('end', () => console.log(JSON.parse(s).Invocation.InvocationResults.InvocationResult[0].InvocationStatus));")"
+  case "$INVOKE_STATUS" in
+    Pending|Scheduled|Running|Stopping) continue ;;
+    *) break ;;
+  esac
+done
+
+printf '%s' "$INVOKE_RESULT" | node -e "let s=''; process.stdin.on('data', d => s += d); process.stdin.on('end', () => { const r = JSON.parse(s).Invocation.InvocationResults.InvocationResult[0]; console.log(r.InvocationStatus + ' exit=' + r.ExitCode); if (r.Output) console.log(Buffer.from(r.Output, 'base64').toString()); if (r.ErrorInfo) console.error(r.ErrorInfo); if (r.InvocationStatus !== 'Success' || Number(r.ExitCode) !== 0) { console.error('remote deployment did not reach Success/exit 0; aborting before online verification'); process.exit(1); } });"
 
 VERIFY_DIR="$(mktemp -d)"
 trap 'rm -rf "$VERIFY_DIR"' EXIT

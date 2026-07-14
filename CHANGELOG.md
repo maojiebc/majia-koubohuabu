@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.2.0 - 2026-07-14
+
+- 修复（审查 P1）：ChatCut 内运行时把人物形态切到 `circle` 会得到椭圆——JSX 现同时携带原始框与预计算正方形框，按运行时形态选用。
+- 修复（审查 P1）：部署脚本改为轮询 RunCommand 至终态（最长 150s），严格要求 `Success` 且 `ExitCode=0` 才继续线上校验，消除提前校验与误判成功的竞态。
+- 修复（审查 P2）：PNG 与 ChatCut JSX 背景与网页预览对齐——PNG 用等价 Canvas 渐变，JSX 输出主题渐变 + 48px 网格层；`check` 新增渐变格式守卫。
+- 修复（审查 P2）：观点字号规则收敛为共享函数，JSX 内按运行时文案长度自适应，长文案不再越界。
+
 ## 2.1.1 - 2026-07-13
 
 - 修复：录屏素材上传后不显示——`.screen-placeholder` 的显式 `display:grid` 压过了 `[hidden]` 规则，占位图不退场、真素材被挤出裁切区；全局补 `[hidden]{display:none!important}` 兜底。
