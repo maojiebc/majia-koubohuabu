@@ -983,11 +983,14 @@ export default Component;`;
       });
     });
 
-    elements.resetContent.addEventListener("click", () => {
-      state.content = { ...DEFAULT_CONTENT };
-      syncForm();
-      updatePreview();
-    });
+    // 兼容缓存中的旧版 HTML 壳：恢复按钮是 v2.1 才加入的可选元素
+    if (elements.resetContent) {
+      elements.resetContent.addEventListener("click", () => {
+        state.content = { ...DEFAULT_CONTENT };
+        syncForm();
+        updatePreview();
+      });
+    }
 
     elements.screenFitSelect.addEventListener("change", (event) => {
       state.screenFit = event.target.value;
@@ -1083,7 +1086,7 @@ export default Component;`;
       bindEvents();
       updatePreview();
     } catch (error) {
-      elements.previewStage.innerHTML = `<div class="kit-load-error"><strong>双画面配置数据加载失败</strong><span>${escapeHtml(error.message)}</span></div>`;
+      elements.previewStage.innerHTML = `<div class="kit-load-error"><strong>页面初始化失败</strong><span>${escapeHtml(error.message)}</span><span>多为浏览器缓存了旧版页面所致：请强制刷新一次（Mac 上 Cmd+Shift+R），或清除本站缓存后重开。</span></div>`;
       console.error(error);
     }
   }
