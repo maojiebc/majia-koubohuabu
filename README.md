@@ -4,6 +4,10 @@
 
 线上版：[https://www.majia.pro/koubo](https://www.majia.pro/koubo)
 
+![majia-koubohuabu 双画面构图体系：录屏画面1 + 主讲人画面2 双素材输入 → 双画面构图核心(横版1920×1080 / 竖版1080×1920,共8个layoutId,config/compositions.json为坐标唯一源) → 叠加系统(8套配色token / 三段包装文案 / 单行字幕) → 质量门 npm run check → 多格式导出(PNG/SVG/场景JSON/ChatCut JSX/Markdown交接/交接ZIP) → 下游 ChatCut 代理接力](docs/framework.png)
+
+> 矢量源 [`docs/framework.svg`](docs/framework.svg)。构图在此、审美在彼：本工具负责双画面构图与交接件，下游由 `majia-chatcut-koubo` 决策规则决定「剪成什么样算好」。
+
 ## 当前能力
 
 - 本地导入录屏和主讲人图片 / 视频，素材不上传服务器。

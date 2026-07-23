@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 920" font-family="'PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif">
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#8a949e"/>
+    </marker>
+    <style>.t{fill:#1f2933}.sub{fill:#5b6670}.mut{fill:#8a949e}.h{font-weight:700}</style>
+  </defs>
+  <rect x="0" y="0" width="1280" height="920" fill="#fbfbf9"/>
+
+  <!-- Header -->
+  <text x="60" y="56" class="t h" font-size="33">majia-koubohuabu · 双画面构图体系</text>
+  <text x="60" y="88" class="sub" font-size="17">每个版式都围绕【录屏画面 1】+【主讲人画面 2】，叠加单行字幕与克制包装，一键交接 ChatCut　·　线上 majia.pro/koubo</text>
+
+  <!-- Input row -->
+  <rect x="60" y="112" width="555" height="72" rx="13" fill="#eef1f4" stroke="#8a97a5" stroke-width="1.6"/>
+  <text x="84" y="144" class="t h" font-size="19">🎬 录屏画面 1</text>
+  <text x="84" y="170" class="sub" font-size="14">本地导入 · 不上传服务器 · contain / cover</text>
+
+  <rect x="665" y="112" width="555" height="72" rx="13" fill="#eef1f4" stroke="#8a97a5" stroke-width="1.6"/>
+  <text x="689" y="144" class="t h" font-size="19">🧑 主讲人画面 2</text>
+  <text x="689" y="170" class="sub" font-size="14">正圆 / 圆角矩形 / 透明抠像</text>
+
+  <!-- merge arrows -->
+  <path d="M337,184 L620,214" stroke="#8a949e" stroke-width="1.5" fill="none" marker-end="url(#ar)"/>
+  <path d="M942,184 L660,214" stroke="#8a949e" stroke-width="1.5" fill="none" marker-end="url(#ar)"/>
+
+  <!-- Composition core -->
+  <rect x="60" y="220" width="1160" height="168" rx="14" fill="#e7ecf7" stroke="#4a63a8" stroke-width="1.8"/>
+  <text x="84" y="253" class="t h" font-size="20">双画面构图核心</text>
+  <text x="270" y="253" class="sub" font-size="14">坐标唯一数据源 · <tspan font-family="monospace">config/compositions.json</tspan></text>
+  <rect x="90" y="272" width="530" height="96" rx="11" fill="#ffffff" stroke="#9fb0d6"/>
+  <text x="112" y="303" class="t h" font-size="17">横版 1920 × 1080</text>
+  <text x="112" y="330" class="sub" font-size="14">4 个具名双画面版式</text>
+  <text x="112" y="354" class="sub" font-size="14">录屏 / 人物 / 字幕 三槽位</text>
+  <rect x="650" y="272" width="530" height="96" rx="11" fill="#ffffff" stroke="#9fb0d6"/>
+  <text x="672" y="303" class="t h" font-size="17">竖版 1080 × 1920</text>
+  <text x="672" y="330" class="sub" font-size="14">4 个具名双画面版式</text>
+  <text x="672" y="354" class="sub" font-size="14">合计 8 个 layoutId</text>
+
+  <path d="M640,388 L640,422" stroke="#8a949e" stroke-width="1.7" marker-end="url(#ar)"/>
+  <text x="656" y="412" class="mut" font-size="13" font-style="italic">在构图上叠加</text>
+
+  <!-- Overlay system: 3 cards -->
+  <rect x="60" y="430" width="368" height="112" rx="13" fill="#e3f1ee" stroke="#3a9585" stroke-width="1.6"/>
+  <text x="82" y="462" class="t h" font-size="17">🎨 8 套配色 token</text>
+  <text x="82" y="489" class="sub" font-size="13.5">portrait-talk-theme-kit</text>
+  <text x="82" y="512" class="sub" font-size="13.5">vendor 只读 · SHA-256 锁定</text>
+
+  <rect x="456" y="430" width="368" height="112" rx="13" fill="#e3f1ee" stroke="#3a9585" stroke-width="1.6"/>
+  <text x="478" y="462" class="t h" font-size="17">📦 三段包装文案</text>
+  <text x="478" y="489" class="sub" font-size="13.5">自带默认值</text>
+  <text x="478" y="512" class="sub" font-size="13.5">空着也能直接出片</text>
+
+  <rect x="852" y="430" width="368" height="112" rx="13" fill="#e3f1ee" stroke="#3a9585" stroke-width="1.6"/>
+  <text x="874" y="462" class="t h" font-size="17">💬 单行字幕</text>
+  <text x="874" y="489" class="sub" font-size="13.5">克制包装系统</text>
+  <text x="874" y="512" class="sub" font-size="13.5">不与人物碰撞</text>
+
+  <path d="M640,542 L640,574" stroke="#8a949e" stroke-width="1.7" marker-end="url(#ar)"/>
+
+  <!-- Quality gate -->
+  <rect x="60" y="578" width="1160" height="70" rx="13" fill="#f6e6d6" stroke="#c8702f" stroke-width="1.6"/>
+  <text x="84" y="609" class="t h" font-size="18">🚦 质量门 · <tspan font-family="monospace">npm run check</tspan></text>
+  <text x="84" y="634" class="sub" font-size="14">SHA-256 完整性 · 8 主题 × 8 版式 · 所有槽位在画布内 · 正圆用正方可见框 · 人物≠字幕碰撞 · JS 语法与构建产物</text>
+
+  <path d="M640,648 L640,680" stroke="#8a949e" stroke-width="1.7" marker-end="url(#ar)"/>
+
+  <!-- Export -->
+  <rect x="60" y="684" width="1160" height="112" rx="14" fill="#e4f3e8" stroke="#3f9d5c" stroke-width="1.8"/>
+  <text x="84" y="716" class="t h" font-size="18">📤 多格式导出</text>
+  <g font-size="14" class="t">
+    <rect x="84" y="732" width="118" height="34" rx="17" fill="#ffffff" stroke="#7cc196"/><text x="143" y="754" text-anchor="middle">PNG</text>
+    <rect x="214" y="732" width="118" height="34" rx="17" fill="#ffffff" stroke="#7cc196"/><text x="273" y="754" text-anchor="middle">SVG</text>
+    <rect x="344" y="732" width="150" height="34" rx="17" fill="#ffffff" stroke="#7cc196"/><text x="419" y="754" text-anchor="middle">场景 JSON</text>
+    <rect x="506" y="732" width="168" height="34" rx="17" fill="#fff6ec" stroke="#c8843a"/><text x="590" y="754" text-anchor="middle" class="h">ChatCut JSX</text>
+    <rect x="686" y="732" width="168" height="34" rx="17" fill="#ffffff" stroke="#7cc196"/><text x="770" y="754" text-anchor="middle">Markdown 交接</text>
+    <rect x="866" y="732" width="140" height="34" rx="17" fill="#ffffff" stroke="#7cc196"/><text x="936" y="754" text-anchor="middle">交接 ZIP</text>
+  </g>
+  <text x="1030" y="755" class="sub" font-size="13.5" font-style="italic">→ 下游 ChatCut 代理接力</text>
+
+  <!-- footer -->
+  <text x="60" y="840" class="mut" font-size="13.5">交接件喂给 ChatCut 宿主，再由 majia-chatcut-koubo 决策规则决定「剪成什么样算好」 —— 构图在此、审美在彼，上下游分工</text>
+  <text x="60" y="866" class="mut" font-size="13">规则唯一真相源 AGENTS.md · 素材不上传服务器 · 私有产品 · 部署固定 /koubo 子目录</text>
+</svg>
