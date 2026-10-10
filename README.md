@@ -76,4 +76,6 @@ majia-koubohuabu/
 
 ## 许可
 
-本仓库为私有项目，未授权对外复制或再分发。
+© 2026 maojiebc（马甲），保留所有权利。本仓库源码公开供阅读与参考，未附开源许可证；未经书面授权，不得复制、修改、再分发或商用，包括 `vendor/portrait-talk-theme-kit/` 配色包。
+
+直接使用线上版 [majia.pro/koubo](https://www.majia.pro/koubo) 不受此限。

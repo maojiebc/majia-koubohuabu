@@ -80,5 +80,5 @@
 
   <!-- footer -->
   <text x="60" y="840" class="mut" font-size="13.5">交接件喂给 ChatCut 宿主，再由 majia-chatcut-koubo 决策规则决定「剪成什么样算好」 —— 构图在此、审美在彼，上下游分工</text>
-  <text x="60" y="866" class="mut" font-size="13">规则唯一真相源 AGENTS.md · 素材不上传服务器 · 私有产品 · 部署固定 /koubo 子目录</text>
+  <text x="60" y="866" class="mut" font-size="13">规则唯一真相源 AGENTS.md · 素材不上传服务器 · 保留所有权利 · 部署固定 /koubo 子目录</text>
 </svg>
